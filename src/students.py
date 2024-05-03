@@ -67,3 +67,25 @@ def delete_score(db, cursor, sID, cID):
         print(f"发生错误：{e}")
         db.rollback()
         return
+    
+# 修改学号
+def changeid_student(db, cursor, oldID, newID):
+    sql = "CALL updateStudentID(%s, %s)"
+    try:
+        cursor.execute(sql, (oldID, newID)) 
+        db.commit()
+    except Exception as e:
+        print(f"发生错误：{e}")
+        db.rollback()
+        return
+
+# 查询已获得总学分
+def get_total_points(db, cursor, ID):
+    sql = f"SELECT GetTotalCredits({ID}) as TotalCredits"
+    try:
+        cursor.execute(sql) 
+        result = cursor.fetchone()
+        return result
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return

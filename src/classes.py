@@ -35,3 +35,13 @@ def delete_class(db, cursor, ID):
         db.rollback()
         return
     
+# 修改课程号
+def changeid_class(db, cursor, oldID, newID):
+    sql = "CALL updateClassID(%s, %s)"
+    try:
+        cursor.execute(sql, (oldID, newID)) 
+        db.commit()
+    except Exception as e:
+        print(f"发生错误：{e}")
+        db.rollback()
+        return
