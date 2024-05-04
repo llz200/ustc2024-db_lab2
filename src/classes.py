@@ -14,10 +14,12 @@ def add_class(db, cursor, ID, name, point):
 
 # 对课程的属性进行修改
 def change_class(db, cursor, ID, num, newinf):
-    STR = ["ClassID","Name", "Point"]
-    sql = "UPDATE Classes SET %s = %s WHERE ClassID = %s"
+    if (num == 1):
+        sql = "UPDATE Classes SET Name = %s WHERE ClassID = %s"
+    if (num == 2):
+        sql = "UPDATE Classes SET Point = %s WHERE ClassID = %s"
     try:
-        cursor.execute(sql, (STR[num], newinf, ID)) 
+        cursor.execute(sql, (newinf, ID)) 
         db.commit()
     except Exception as e:
         print(f"发生错误：{e}")

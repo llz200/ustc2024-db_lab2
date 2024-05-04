@@ -54,7 +54,29 @@ def select_student_class_score(db, cursor, sID, cID):
     except Exception as e:
         print(f"发生错误：{e}")
         return
+
+# 查询某个学生某个奖项
+def select_student_prize_one(db, cursor, ID, name):
+    sql = "SELECT * FROM Prizetime WHERE StudentID = %s AND PrizeName = %s"
+    try:
+        cursor.execute(sql, (ID, name)) 
+        student_info = cursor.fetchone()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
     
+# 查询某个学生某个惩罚
+def select_student_punish_one(db, cursor, ID, name):
+    sql = "SELECT * FROM Punishtime WHERE StudentID = %s AND PunishName = %s"
+    try:
+        cursor.execute(sql, (ID, name)) 
+        student_info = cursor.fetchone()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
+
 # 查询学生列表
 def select_students_all(db, cursor):
     sql = "SELECT * FROM Students"
@@ -76,6 +98,28 @@ def select_classes_all(db, cursor):
     except Exception as e:
         print(f"发生错误：{e}")
         return
+
+# 查询奖项列表
+def select_prize_all(db, cursor):
+    sql = "SELECT * FROM Prizes"
+    try:
+        cursor.execute(sql) 
+        student_info = cursor.fetchall()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
+    
+# 查询惩罚列表
+def select_punish_all(db, cursor):
+    sql = "SELECT * FROM Punishments"
+    try:
+        cursor.execute(sql) 
+        student_info = cursor.fetchall()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
     
 # 按名字查询学生
 def select_students_name(db, cursor, name):
@@ -83,6 +127,39 @@ def select_students_name(db, cursor, name):
     try:
         cursor.execute(sql, (name, )) 
         student_info = cursor.fetchall()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
+    
+# 按课程号查询课程
+def select_class_ID(db, cursor, ID):
+    sql = "SELECT * FROM Classes WHERE ClassID = %s"
+    try:
+        cursor.execute(sql, (ID, )) 
+        student_info = cursor.fetchone()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
+    
+# 按名字查询奖项
+def select_prize_name(db, cursor, name):
+    sql = "SELECT * FROM Prizes WHERE PrizeName = %s"
+    try:
+        cursor.execute(sql, (name, )) 
+        student_info = cursor.fetchone()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
+    
+# 按名字查询惩罚
+def select_punish_name(db, cursor, name):
+    sql = "SELECT * FROM Punishments WHERE PunishName = %s"
+    try:
+        cursor.execute(sql, (name, )) 
+        student_info = cursor.fetchone()
         return student_info
     except Exception as e:
         print(f"发生错误：{e}")

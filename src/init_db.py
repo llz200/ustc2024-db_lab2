@@ -116,8 +116,8 @@ def init(db, cursor):
     ClassID CHAR(10),
     Score INT,
     PRIMARY KEY (StudentID, ClassID),
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
-    FOREIGN KEY (ClassID) REFERENCES Classes(ClassID)
+    CONSTRAINT Scores_sforeign FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    CONSTRAINT Scores_cforeign FOREIGN KEY (ClassID) REFERENCES Classes(ClassID)
     )
     """
     try:
@@ -148,8 +148,8 @@ def init(db, cursor):
     PunishName VARCHAR(64) NOT NULL,
     Date DATE,
     PRIMARY KEY (PunishName),
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
-    FOREIGN KEY (PunishName) REFERENCES Punishments(PunishName)
+    CONSTRAINT Punishtime_sforeign FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    CONSTRAINT Punishtime_pforeign FOREIGN KEY (PunishName) REFERENCES Punishments(PunishName)
     )
     """
     try:
@@ -181,8 +181,8 @@ def init(db, cursor):
     PrizeName VARCHAR(64) NOT NULL,
     Date DATE,
     PRIMARY KEY (PrizeName),
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
-    FOREIGN KEY (PrizeName) REFERENCES Prizes(PrizeName)
+    CONSTRAINT Prizetime_sforeign FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    CONSTRAINT Prizetime_pforeign FOREIGN KEY (PrizeName) REFERENCES Prizes(PrizeName)
     )
     """
     try:
@@ -206,21 +206,21 @@ def init(db, cursor):
     CREATE PROCEDURE updateStudentID(IN old_id CHAR(10), IN new_id CHAR(10))
     BEGIN
         ALTER TABLE Scores
-        DROP FOREIGN KEY StudentID;
+        DROP FOREIGN KEY Scores_sforeign;
         
         UPDATE Scores
         SET StudentID = new_id
         WHERE StudentID = old_id;
         
         ALTER TABLE Punishtime
-        DROP FOREIGN KEY StudentID;
+        DROP FOREIGN KEY Punishtime_sforeign;
         
         UPDATE Punishtime
         SET StudentID = new_id
         WHERE StudentID = old_id;
 
         ALTER TABLE Prizetime
-        DROP FOREIGN KEY StudentID;
+        DROP FOREIGN KEY Prizetime_sforeign;
         
         UPDATE Prizetime
         SET StudentID = new_id
@@ -231,16 +231,13 @@ def init(db, cursor):
         WHERE StudentID = old_id;
         
         ALTER TABLE Scores
-        ADD CONSTRAINT StudentID
-        FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
+        ADD CONSTRAINT Scores_sforeign FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
 
         ALTER TABLE Punishtime
-        ADD CONSTRAINT StudentID
-        FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
+        ADD CONSTRAINT Punishtime_sforeign FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
 
         ALTER TABLE Prizetime
-        ADD CONSTRAINT StudentID
-        FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
+        ADD CONSTRAINT Prizetime_sforeign FOREIGN KEY (StudentID) REFERENCES Students (StudentID);
     END
     """
     try:
@@ -263,7 +260,7 @@ def init(db, cursor):
     CREATE PROCEDURE updateClassID(IN old_id CHAR(10), IN new_id CHAR(10))
     BEGIN
         ALTER TABLE Scores
-        DROP FOREIGN KEY ClassID;
+        DROP FOREIGN KEY Scores_cforeign;
         
         UPDATE Scores
         SET ClassID = new_id
@@ -274,8 +271,7 @@ def init(db, cursor):
         WHERE ClassID = old_id;
         
         ALTER TABLE Scores
-        ADD CONSTRAINT ClassID
-        FOREIGN KEY (ClassID) REFERENCES Classes (ClassID);
+        ADD CONSTRAINT Scores_cforeign FOREIGN KEY (ClassID) REFERENCES Classes (ClassID);
 
     END
     """
@@ -301,9 +297,9 @@ def init(db, cursor):
     DETERMINISTIC
     BEGIN
         DECLARE total_points INT;
-        SELECT SUM(Classes.Points) INTO total_points
-        FROM Points
-        WHERE ClassID IN (SELECT ClassID FROM Points WHERE Points.StudentID = student_id);
+        SELECT SUM(Classes.Point) INTO total_points
+        FROM Classes
+        WHERE ClassID IN (SELECT ClassID FROM Scores WHERE Scores.StudentID = student_id);
         RETURN total_points;
     END
     """
@@ -315,7 +311,7 @@ def init(db, cursor):
         db.rollback()
         return
 # 触发器：删除学生，课程，惩罚，奖项时自动删除相关成绩，日期
-    sql = "DROP TRIGGER IF EXISTS trg_after_delete_student"
+    sql = "DROP TRIGGER IF EXISTS trg_delete_student"
     try:
         cursor.execute(sql)
         db.commit()
@@ -325,8 +321,8 @@ def init(db, cursor):
         return
     
     sql = """
-    CREATE TRIGGER trg_after_delete_student
-    AFTER DELETE ON Students
+    CREATE TRIGGER trg_delete_student
+    BEFORE DELETE ON Students
     FOR EACH ROW
     BEGIN
         SELECT COUNT(*) INTO @count FROM Scores WHERE StudentID = OLD.StudentID;
@@ -356,7 +352,7 @@ def init(db, cursor):
         db.rollback()
         return
     
-    sql = "DROP TRIGGER IF EXISTS trg_after_delete_class"
+    sql = "DROP TRIGGER IF EXISTS trg_delete_class"
     try:
         cursor.execute(sql)
         db.commit()
@@ -366,8 +362,8 @@ def init(db, cursor):
         return
     
     sql = """
-    CREATE TRIGGER trg_after_delete_class
-    AFTER DELETE ON Classes
+    CREATE TRIGGER trg_delete_class
+    BEFORE DELETE ON Classes
     FOR EACH ROW
     BEGIN
         SELECT COUNT(*) INTO @count FROM Scores WHERE ClassID = OLD.ClassID;
@@ -385,7 +381,7 @@ def init(db, cursor):
         db.rollback()
         return
     
-    sql = "DROP TRIGGER IF EXISTS trg_after_delete_punish"
+    sql = "DROP TRIGGER IF EXISTS trg_delete_punish"
     try:
         cursor.execute(sql)
         db.commit()
@@ -395,8 +391,8 @@ def init(db, cursor):
         return
     
     sql = """
-    CREATE TRIGGER trg_after_delete_punish
-    AFTER DELETE ON Punishments
+    CREATE TRIGGER trg_delete_punish
+    BEFORE DELETE ON Punishments
     FOR EACH ROW
     BEGIN
         SELECT COUNT(*) INTO @count FROM Punishtime WHERE PunishName = OLD.PunishName;
@@ -415,7 +411,7 @@ def init(db, cursor):
         db.rollback()
         return
 
-    sql = "DROP TRIGGER IF EXISTS trg_after_delete_prize"
+    sql = "DROP TRIGGER IF EXISTS trg_delete_prize"
     try:
         cursor.execute(sql)
         db.commit()
@@ -425,8 +421,8 @@ def init(db, cursor):
         return
     
     sql = """
-    CREATE TRIGGER trg_after_delete_prize
-    AFTER DELETE ON Prizes
+    CREATE TRIGGER trg_delete_prize
+    BEFORE DELETE ON Prizes
     FOR EACH ROW
     BEGIN               
         SELECT COUNT(*) INTO @count FROM Prizetime WHERE PrizeName = OLD.PrizeName;
