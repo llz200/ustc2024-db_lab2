@@ -54,3 +54,36 @@ def select_student_class_score(db, cursor, sID, cID):
     except Exception as e:
         print(f"发生错误：{e}")
         return
+    
+# 查询学生列表
+def select_students_all(db, cursor):
+    sql = "SELECT * FROM Students"
+    try:
+        cursor.execute(sql) 
+        student_info = cursor.fetchall()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
+    
+# 查询课程列表
+def select_classes_all(db, cursor):
+    sql = "SELECT * FROM Classes"
+    try:
+        cursor.execute(sql) 
+        student_info = cursor.fetchall()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
+    
+# 按名字查询学生
+def select_students_name(db, cursor, name):
+    sql = "SELECT * FROM Students WHERE Name = %s"
+    try:
+        cursor.execute(sql, (name, )) 
+        student_info = cursor.fetchall()
+        return student_info
+    except Exception as e:
+        print(f"发生错误：{e}")
+        return
