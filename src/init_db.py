@@ -293,7 +293,7 @@ def init(db, cursor):
         return
     
     sql = """
-    CREATE FUNCTION GetTotalPoints (student_id INT) RETURNS INT
+    CREATE FUNCTION GetTotalPoints (student_id CHAR(10)) RETURNS INT
     DETERMINISTIC
     BEGIN
         DECLARE total_points INT;

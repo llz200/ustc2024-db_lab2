@@ -87,9 +87,9 @@ def changeid_student(db, cursor, oldID, newID):
 
 # 查询已获得总学分
 def get_total_points(db, cursor, ID):
-    sql = f"SELECT GetTotalPoints({ID}) as TotalCredits"
+    sql = "SELECT GetTotalPoints(%s) as TotalCredits"
     try:
-        cursor.execute(sql) 
+        cursor.execute(sql, (ID, )) 
         result = cursor.fetchone()
         return result
     except Exception as e:

@@ -10,7 +10,6 @@ from PyQt6.QtWidgets import QPushButton, QMessageBox, QApplication, QVBoxLayout,
 from PyQt6.QtWidgets import QLineEdit, QDialog, QLabel, QFileDialog
 from PyQt6.QtCore import QByteArray
 from PyQt6.QtGui import QIcon, QPixmap, QImage
-from PIL import Image
 
 class Check_StudentWindow(QDialog):
     def __init__(self, db, cursor):
@@ -99,8 +98,11 @@ class ResultWindow(QWidget):
         scoreinfo = selects.select_student_score(self.db, self.cursor, self.id)
         punishinfo = selects.select_student_prizes(self.db, self.cursor, self.id)
         prizeinfo = selects.select_student_punish(self.db, self.cursor, self.id)
-        total_points_info = students.get_total_points(self.db, self.cursor, self.id)
-        total_points = total_points_info[0]
+        if (len(scoreinfo)!=0):
+            total_points_info = students.get_total_points(self.db, self.cursor, self.id)
+            total_points = total_points_info[0]
+        else:
+            total_points = 0
 
         # 创建 QLabel 对象
         self.label1 = QLabel(f"学号：{self.id}")
