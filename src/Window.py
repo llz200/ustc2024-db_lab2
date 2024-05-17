@@ -576,6 +576,7 @@ class New_StudentWindow(QDialog):
         if (len(self.input_box3.text()) != 0):
             try:
                 self.age = int(self.input_box3.text())
+                assert(self.age > 0)
                 self.acceptflag += 1
             except Exception as e:
                 print(f"发生错误：{e}")
@@ -693,6 +694,7 @@ class Change_StudentWindow(QDialog):
         if (len(self.input_box3.text()) != 0):
             try:
                 self.age = int(self.input_box3.text())
+                assert(self.age > 0)
                 self.acceptflag = True
             except Exception as e:
                 print(f"发生错误：{e}")
@@ -797,6 +799,7 @@ class New_ClassWindow(QDialog):
         if (len(self.input_box3.text()) != 0):
             try:
                 self.point = int(self.input_box3.text())
+                assert(self.age > 0)
                 acceptflag += 1
             except Exception as e:
                 print(f"发生错误：{e}")
@@ -879,6 +882,7 @@ class Change_ClassWindow(QDialog):
         if (len(self.input_box3.text()) != 0):
             try:
                 self.point = int(self.input_box3.text())
+                assert(self.age > 0)
                 acceptflag = True
             except Exception as e:
                 print(f"发生错误：{e}")
